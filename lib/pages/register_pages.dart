@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'; // untuk debugPrint
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
