@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'pages/register_pages.dart';
+import 'pages/login_pages.dart';
+import 'pages/register_page.dart';
+import 'pages/dashboard_pages.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,9 +12,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: RegisterPage(),
+      initialRoute: '/dashboard',
+      routes: {
+        '/login': (context) => const LoginPages(),
+        '/register': (context) => const RegisterPage(),
+        '/dashboard': (context) => const DashboardPages(),
+      },
     );
   }
 }
