@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'; // untuk debugPrint
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -19,11 +20,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _handleRegister() {
     if (_formKey.currentState!.validate()) {
-      print('Data pendaftaran:');
-      print('Nama Lengkap: ${fullNameController.text}');
-      print('Email: ${emailController.text}');
-      print('Password: ${passwordController.text}');
-      print('Konfirmasi: ${confirmPasswordController.text}');
+      debugPrint('Data pendaftaran:');
+      debugPrint('Nama Lengkap: ${fullNameController.text}');
+      debugPrint('Email: ${emailController.text}');
+      debugPrint('Password: ${passwordController.text}');
+      debugPrint('Konfirmasi: ${confirmPasswordController.text}');
       // Tambahkan logika pendaftaran di sini
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Pendaftaran berhasil!')),
@@ -33,7 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _navigateToLogin() {
     // Arahkan ke halaman login
-    print('Navigasi ke halaman login');
+    debugPrint('Navigasi ke halaman login');
     // Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginPage()));
   }
 
@@ -56,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
           // Overlay gelap transparan
           Container(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withValues(alpha: 0.4), // ✅ perbaikan di sini
           ),
 
           // Konten form
@@ -66,11 +67,11 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Container(
                 width: 400,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.85),
+                  color: Colors.white.withValues(alpha: 0.85), // ✅ perbaikan di sini
                   borderRadius: BorderRadius.circular(25),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withValues(alpha: 0.2), // ✅ perbaikan di sini
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
