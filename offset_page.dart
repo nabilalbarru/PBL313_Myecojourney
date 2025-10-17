@@ -190,7 +190,7 @@ class _OffsetPageState extends State<OffsetPage> {
             const SizedBox(height: 14),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Pilih Organisasi', border: OutlineInputBorder()),
-              value: selectedOrganization,
+              initialValue: selectedOrganization,
               items: organizations.map((org) => DropdownMenuItem(value: org, child: Text(org))).toList(),
               onChanged: (value) => setState(() => selectedOrganization = value),
             ),
