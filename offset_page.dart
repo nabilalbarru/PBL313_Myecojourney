@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-
-void main() {
-  runApp(const MaterialApp(home: OffsetPage()));
-}
+import '../main.dart'; // 🔹 untuk helper navigasi
 
 // ================= OFFSET PAGE =================
-
 class OffsetPage extends StatefulWidget {
   const OffsetPage({super.key});
 
@@ -26,48 +22,45 @@ class _OffsetPageState extends State<OffsetPage> {
     'Lindungi Hutan',
   ];
 
+  int _selectedIndex = 3; // posisi "Offset"
+
+  // ✅ Gabungan fungsi navigasi lengkap tanpa menghapus apapun
+  void _onItemTapped(int index) {
+  if (index == 0) {
+    goToHome(context); // ke halaman Home
+  } else if (index == 1) {
+    goToTracking(context); //  ke halaman Tracking
+  } else if (index == 2) {
+    goToMonitor(context); // ke halaman Monitor
+  } else if (index == 3) {
+    goToOffset(context); // tetap di halaman Offset
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F7F3),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1F5134),
-        elevation: 0,
-        title: const Text('Offset Karbon', style: TextStyle(color: Colors.white)),
-        actions: [
-          // Profile dropdown
-          PopupMenuButton<String>(
-            icon: const CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Icon(Icons.person, color: Color(0xFF1F5134)),
-            ),
-            onSelected: (value) {
-              if (value == 'profile') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfilePage()),
-                );
-              } else if (value == 'edit') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const EditProfilePage()),
-                );
-              } else if (value == 'password') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
-                );
-              }
-            },
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: 'profile', child: Text('Profile')),
-              PopupMenuItem(value: 'edit', child: Text('Edit Profile')),
-              PopupMenuItem(value: 'password', child: Text('Ganti Password')),
-            ],
+          backgroundColor: const Color(0xFF1F5134),
+          elevation: 0,
+          centerTitle: true, // ✅ Tambahan agar teks di tengah
+          automaticallyImplyLeading: false, // ✅ Tambahan agar panah kiri dihapus
+          title: const Text(
+            'Offset Karbon',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(width: 10),
-        ],
-      ),
+          actions: [
+            IconButton(
+              icon: const CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(Icons.person, color: Color(0xFF1F5134)),
+              ),
+              onPressed: () => goToProfile(context),
+            ),
+            const SizedBox(width: 10),
+          ],
+        ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -78,7 +71,22 @@ class _OffsetPageState extends State<OffsetPage> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
+
+      // ✅ Bottom Navigation Bar dengan navigasi lengkap
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        selectedItemColor: const Color(0xFF1F5134),
+        unselectedItemColor: Colors.grey,
+        backgroundColor: const Color(0xFFE5F3EB),
+        type: BottomNavigationBarType.fixed,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.location_on), label: 'Tracking'),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Monitor'),
+          BottomNavigationBarItem(icon: Icon(Icons.eco), label: 'Offset'),
+        ],
+      ),
     );
   }
 
@@ -185,12 +193,14 @@ class _OffsetPageState extends State<OffsetPage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Pilih organisasi dan jumlah donasi untuk mengoffset jejak karbon Anda',
-                style: TextStyle(fontSize: 13)),
+            const Text(
+              'Pilih organisasi dan jumlah donasi untuk mengoffset jejak karbon Anda',
+              style: TextStyle(fontSize: 13),
+            ),
             const SizedBox(height: 14),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Pilih Organisasi', border: OutlineInputBorder()),
-              initialValue: selectedOrganization,
+              value: selectedOrganization,
               items: organizations.map((org) => DropdownMenuItem(value: org, child: Text(org))).toList(),
               onChanged: (value) => setState(() => selectedOrganization = value),
             ),
@@ -198,8 +208,8 @@ class _OffsetPageState extends State<OffsetPage> {
             TextField(
               controller: donationController,
               keyboardType: TextInputType.number,
-              decoration:
-                  const InputDecoration(labelText: 'Jumlah Donasi (Rupiah)', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'Jumlah Donasi (Rupiah)', border: OutlineInputBorder()),
               onChanged: (val) => setState(() => donation = double.tryParse(val) ?? 0),
             ),
             const SizedBox(height: 10),
@@ -231,29 +241,11 @@ class _OffsetPageState extends State<OffsetPage> {
       ),
     );
   }
-
-  Widget _buildBottomNav() {
-    final items = [
-      {'icon': Icons.home, 'label': 'Home'},
-      {'icon': Icons.location_on, 'label': 'Tracking'},
-      {'icon': Icons.bar_chart, 'label': 'Monitor'},
-      {'icon': Icons.eco, 'label': 'Offset'},
-    ];
-
-    return BottomNavigationBar(
-      currentIndex: 3,
-      selectedItemColor: const Color(0xFF1F5134),
-      unselectedItemColor: Colors.grey,
-      backgroundColor: const Color(0xFFE5F3EB),
-      type: BottomNavigationBarType.fixed,
-      items: items
-          .map((e) => BottomNavigationBarItem(icon: Icon(e['icon'] as IconData), label: e['label'] as String))
-          .toList(),
-    );
-  }
 }
 
-// ================= TRANSFER =================
+
+// ================= HALAMAN TAMBAHAN =================
+
 
 class TransferMethodPage extends StatelessWidget {
   const TransferMethodPage({super.key});
@@ -295,8 +287,6 @@ class TransferMethodPage extends StatelessWidget {
   }
 }
 
-// ================= DETAIL TRANSFER =================
-
 class TransferDetailPage extends StatelessWidget {
   final String bankName;
   const TransferDetailPage({super.key, required this.bankName});
@@ -313,8 +303,7 @@ class TransferDetailPage extends StatelessWidget {
           const SizedBox(height: 6),
           Container(
             padding: const EdgeInsets.all(12),
-            decoration:
-                BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [Text('2222744635 - Yayasan Pohon Indonesia'), Icon(Icons.copy)],
@@ -325,8 +314,7 @@ class TransferDetailPage extends StatelessWidget {
           const SizedBox(height: 6),
           Container(
             padding: const EdgeInsets.all(12),
-            decoration:
-                BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
             child: const Text('Rp 10.000'),
           ),
           const Spacer(),
@@ -351,8 +339,6 @@ class TransferDetailPage extends StatelessWidget {
   }
 }
 
-// ================= UPLOAD BUKTI OPSIONAL =================
-
 class UploadProofPage extends StatefulWidget {
   const UploadProofPage({super.key});
 
@@ -369,8 +355,6 @@ class _UploadProofPageState extends State<UploadProofPage> {
       setState(() {
         selectedFileName = result.files.single.name;
       });
-    } else {
-      debugPrint("Tidak ada file dipilih (opsional).");
     }
   }
 
@@ -413,7 +397,8 @@ class _UploadProofPageState extends State<UploadProofPage> {
             ),
             const SizedBox(height: 16),
             if (selectedFileName != null)
-              Text('File terpilih: $selectedFileName', style: const TextStyle(fontSize: 14, color: Colors.black87)),
+              Text('File terpilih: $selectedFileName',
+                  style: const TextStyle(fontSize: 14, color: Colors.black87)),
             const SizedBox(height: 40),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -430,8 +415,6 @@ class _UploadProofPageState extends State<UploadProofPage> {
     );
   }
 }
-
-// ================= SUCCESS =================
 
 class SuccessTransferPage extends StatelessWidget {
   const SuccessTransferPage({super.key});
@@ -467,48 +450,6 @@ class SuccessTransferPage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-// ================= EDIT PROFILE =================
-
-class EditProfilePage extends StatelessWidget {
-  const EditProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Edit Profile'), backgroundColor: const Color(0xFF1F5134)),
-      body: const Center(child: Text('Form Edit Profile di sini')),
-    );
-  }
-}
-
-// ================= CHANGE PASSWORD =================
-
-class ChangePasswordPage extends StatelessWidget {
-  const ChangePasswordPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Ganti Password'), backgroundColor: const Color(0xFF1F5134)),
-      body: const Center(child: Text('Form Ganti Password di sini')),
-    );
-  }
-}
-
-// ================= PROFILE PAGE =================
-
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Profile'), backgroundColor: const Color(0xFF1F5134)),
-      body: const Center(child: Text('Halaman Profile di sini')),
     );
   }
 }
